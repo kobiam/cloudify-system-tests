@@ -585,7 +585,20 @@ tests:
     external: *softlayer_plugin_external
     tests:
       - system_tests/manager
-      - system_tests/local
+#      - system_tests/local
+
+  softlayer_blueprints_local:
+    external: *softlayer_plugin_external
+    tests:
+      - system_tests/local/test_plugin_local_workflows.py:WrongCredentialsTests
+      - system_tests/local/test_plugin_local_workflows.py:WrongInputsTests
+      - system_tests/local/test_plugin_local_workflows.py:HostnameTests
+
+
+  softlayer_blueprints_local_StartStopTests:
+    external: *softlayer_plugin_external
+    tests:
+      - system_tests/local/test_plugin_local_workflows.py:StartStopTests
 
   openstack_security:
     tests:
