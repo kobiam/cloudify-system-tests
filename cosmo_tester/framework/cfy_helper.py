@@ -35,8 +35,10 @@ class CfyHelper(object):
 
     def __init__(self,
                  cfy_workdir=None,
-                 management_ip=None):
+                 management_ip=None,
+                 testcase=None):
         self._cfy_workdir = cfy_workdir
+        self._testcase = testcase
         self.tmpdir = False
         if cfy_workdir is None:
             self.tmpdir = True
@@ -199,6 +201,17 @@ class CfyHelper(object):
                          include_logs=True,
                          execute_timeout=DEFAULT_EXECUTE_TIMEOUT,
                          parameters=None):
+
+        if self._testcase and \
+            self._testcase.env and \
+            self._testcase.env._config_reader and \
+                self._testcase.env.transient_deployment_workers_mode_enabled:
+            # we're in transient deployment workers mode - need to verify
+            # there is no "stop deployment environment" execution
+            # running, and wait till it ends if there is one
+            self._testcase.wait_for_stop_dep_env_execution_to_end(
+                deployment_id)
+
         params_file = self._get_inputs_in_temp_file(parameters, workflow)
         with self.workdir:
             cfy.executions.start(

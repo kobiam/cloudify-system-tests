@@ -3,8 +3,8 @@
 # using `{{variable_name}}` syntax
 variables:
 
-  hp_openstack_ubuntu_precise_image_name: Ubuntu Server 12.04.5 LTS (amd64 20150127) - Partner Image
-  hp_openstack_ubuntu_trusty_image_name: Ubuntu Server 14.04.1 LTS (amd64 20140927) - Partner Image
+  hp_openstack_ubuntu_precise_image_name: Ubuntu Server 12.04.5 LTS (amd64 20150707) - Partner Image
+  hp_openstack_ubuntu_trusty_image_name: Ubuntu Server 14.04.1 LTS (amd64 20150706) - Partner Image
   hp_openstack_centos_image_name: CentOS 6.3 Server 64-bit 20130116
   hp_openstack_windows_image_name: Windows Server 2008 R2 Enterprise SP1 x64 Volume License 20140415 (b)
   hp_openstack_region_a_ubuntu_precise: 8ca068c5-6fde-4701-bab8-322b3e7c8d81
@@ -20,10 +20,13 @@ variables:
   lab_openstack_ubuntu_precise: d81ccdfe-7482-460e-a7ce-69ea29aa129b
   lab_openstack_ubuntu_trusty: c6d36e11-f4d5-4221-b6e8-4e97914c67e9
 
-  mirantis_openstack_ubuntu_precise_image_name: Ubuntu 12.04 x64 (pre installed DevStack)
+  mirantis_openstack_ubuntu_precise_image_name: ubuntu_12_04
   mirantis_openstack_ubuntu_trusty_image_name: Ubuntu 14.04 x64 LTS
-  mirantis_openstack_ubuntu_precise: 6d90a96d-4c53-41b2-98b9-36986f622c2a
-  mirantis_openstack_ubuntu_trusty: e6d6681b-46fe-4325-861e-f56ffb3e4fbc
+  mirantis_openstack_ubuntu_precise: c19a4a25-958b-4a10-88bd-6b6d89b69e99
+  mirantis_openstack_ubuntu_trusty: 798e43f2-252e-43f5-a0a8-97371a3c8afa
+  mirantis_openstack_centos_6_5_image_name: centos_6_5
+  mirantis_openstack_centos_7_image_name: centos_7
+  mirantis_openstack_windows_image_name: windows_2012_r2
 
   aws_ec2_eu_central_1_ami_ubuntu_trusty_image_id: ami-00dae61d
   aws_ec2_medium_instance_type: m3.medium
@@ -131,6 +134,10 @@ templates:
   - &aws_ec2_manager_blueprint_override
     <<: *manager_blueprint_override
     <<: *aws_ec2_manager_blueprint_sg_override
+
+  - &transient_deployment_workers_manager_blueprint_override
+    node_templates.manager.properties.cloudify.transient_deployment_workers_mode:
+      enabled: true
 
   ######################################################
 
@@ -273,6 +280,11 @@ handler_properties:
     ubuntu_trusty_image_name: '{{mirantis_openstack_ubuntu_trusty_image_name}}'
     ubuntu_image_id: '{{mirantis_openstack_ubuntu_precise}}'
     ubuntu_trusty_image_id: '{{mirantis_openstack_ubuntu_trusty}}'
+    centos_image_name: '{{mirantis_openstack_centos_6_5_image_name}}'
+    centos_image_user: root
+    centos_7_image_name: '{{mirantis_openstack_centos_7_image_name}}'
+    centos_7_image_user: centos
+    windows_image_name: '{{mirantis_openstack_windows_image_name}}'
     flavor_name: m1.small
     small_flavor_id: 2
     medium_flavor_id: 3
@@ -280,11 +292,11 @@ handler_properties:
   pclab47_devstack_nova_net:
     ubuntu_image_name: ubuntu
     flavor_name: m1.small
-    ubuntu_image_id: eada2fe8-894a-4b26-ac8d-cedab010f185
-    small_flavor_id: 3
+    ubuntu_image_id: 32533bad-fd76-42e8-91fb-93e5c9921498
+    small_flavor_id: 2
 
-  vsphere:
-    template: ubuntu-configured-template
+  vsphere_handler_props:
+    template: systemtests-ubuntu-1404
 
   aws_ec2:
     ubuntu_trusty_image_id: '{{aws_ec2_eu_central_1_ami_ubuntu_trusty_image_id}}'
@@ -353,6 +365,44 @@ handler_configurations:
     inputs_override:
       <<: *hp_openstack_credentials_inputs
       <<: *hp_openstack_region_b_inputs
+      keystone_tenant_name: cloudify-cosmo-system-tests3
+
+  ############################################################################
+
+  transient_deployment_workers_hp_openstack_system_tests2_region_a:
+    <<: *hp_openstack_handler_configuration
+    env: hp_openstack_system_tests2_region_a
+    properties: hp_openstack_region_a_properties
+    manager_blueprint_override:
+      <<: *openstack_manager_blueprint_override
+      <<: *transient_deployment_workers_manager_blueprint_override
+    inputs_override:
+      <<: *hp_openstack_credentials_inputs
+      <<: *hp_openstack_region_a_inputs
+      keystone_tenant_name: cloudify-cosmo-system-tests2
+
+  transient_deployment_workers_hp_openstack_system_tests2_region_b:
+    <<: *hp_openstack_handler_configuration
+    env: hp_openstack_system_tests2_region_b
+    properties: hp_openstack_region_b_properties
+    manager_blueprint_override:
+      <<: *openstack_manager_blueprint_override
+      <<: *transient_deployment_workers_manager_blueprint_override
+    inputs_override:
+      <<: *hp_openstack_credentials_inputs
+      <<: *hp_openstack_region_b_inputs
+      keystone_tenant_name: cloudify-cosmo-system-tests2
+
+  transient_deployment_workers_hp_openstack_system_tests3_region_a:
+    <<: *hp_openstack_handler_configuration
+    env: hp_openstack_system_tests3_region_a
+    properties: hp_openstack_region_a_properties
+    manager_blueprint_override:
+      <<: *openstack_manager_blueprint_override
+      <<: *transient_deployment_workers_manager_blueprint_override
+    inputs_override:
+      <<: *hp_openstack_credentials_inputs
+      <<: *hp_openstack_region_a_inputs
       keystone_tenant_name: cloudify-cosmo-system-tests3
 
   ############################################################################
@@ -427,7 +477,7 @@ handler_configurations:
     inputs_override:
       <<: *mirantis_openstack_credentials_inputs
       <<: *mirantis_openstack_inputs
-      keystone_tenant_name: system-tests-1
+      keystone_tenant_name: system-tests/system-test-1
 
   mirantis_openstack_system_tests2:
     <<: *mirantis_openstack_handler_configuration
@@ -436,7 +486,7 @@ handler_configurations:
     inputs_override:
       <<: *mirantis_openstack_credentials_inputs
       <<: *mirantis_openstack_inputs
-      keystone_tenant_name: system-tests-2
+      keystone_tenant_name: system-tests/system-test-2
 
   mirantis_openstack_system_tests3:
     <<: *mirantis_openstack_handler_configuration
@@ -445,7 +495,7 @@ handler_configurations:
     inputs_override:
       <<: *mirantis_openstack_credentials_inputs
       <<: *mirantis_openstack_inputs
-      keystone_tenant_name: system-tests-3
+      keystone_tenant_name: system-tests/system-test-3
 
   mirantis_openstack_system_tests4:
     <<: *mirantis_openstack_handler_configuration
@@ -454,7 +504,7 @@ handler_configurations:
     inputs_override:
       <<: *mirantis_openstack_credentials_inputs
       <<: *mirantis_openstack_inputs
-      keystone_tenant_name: system-tests-4
+      keystone_tenant_name: system-tests/system-test-4
 
   ###############################################################################
 
@@ -471,19 +521,21 @@ handler_configurations:
 
   ###############################################################################
 
-  vsphere:
+  vsphere_handler_config:
     inputs: inputs-vsphere.yaml
     handler: vsphere_handler
     env: vsphere
     external: *vsphere_plugin_external
     manager_blueprint: manager_blueprint/vsphere-manager-blueprint.yaml
-    properties: vsphere
-    manager_blueprint_override: *manager_blueprint_override
+    properties: vsphere_handler_props
+    manager_blueprint_override: *manager_blueprint_commercial_override
     inputs_override:
       vsphere_username: '{{system_test_vsphere_username}}'
       vsphere_password: '{{system_test_vsphere_password}}'
-      vsphere_url: '{{system_test_vsphere_url}}'
+      vsphere_host: '{{system_test_vsphere_url}}'
       vsphere_datacenter_name: '{{system_test_vsphere_vcenter_name}}'
+      vsphere_resource_pool_name: 'system_tests'
+      manager_server_template: 'systemtests-ubuntu-1404'
 
   ################################################################################
 
@@ -541,10 +593,16 @@ tests:
       tests:
         - cosmo_tester/test_suites/test_blueprints/nodecellar_test.py
 
+  openstack_blueprints_autoheal_and_scale:
+    tests:
+        - cosmo_tester/test_suites/test_blueprints/nodecellar_test_autoheal.py
+        - cosmo_tester/test_suites/test_blueprints/nodecellar_test_scale.py
+
   manager_status:
     tests:
       - cosmo_tester/test_suites/test_manager_status
 
+  # These tests must run on a specific HP tenant and region i.e: hp_openstack_system_tests3_region_a
   manager_recovery:
     tests:
       - cosmo_tester/test_suites/test_manager_recovery
@@ -665,8 +723,25 @@ test_suites:
 
   #####################################################################
 
+  transient_deployment_workers_hp_openstack_nodecellar:
+    handler_configuration: transient_deployment_workers_hp_openstack_system_tests2_region_a
+    tests:
+      - openstack_blueprints_nodecellar
+
+  transient_deployment_workers_hp_openstack_autoheal_and_scale:
+    handler_configuration: transient_deployment_workers_hp_openstack_system_tests2_region_b
+    tests:
+      - openstack_blueprints_autoheal_and_scale
+
+  transient_deployment_workers_hp_openstack_manager_recovery:
+    handler_configuration: transient_deployment_workers_hp_openstack_system_tests3_region_a
+    tests:
+      - manager_recovery
+
+  #####################################################################
+
   lab_openstack_chef_puppet:
-    requires: [openstack, lab]
+    requires: [openstack, mirantis]
     tests:
       - openstack_blueprints_chef_puppet
 
@@ -676,20 +751,24 @@ test_suites:
       - openstack_blueprints_windows
 
   lab_openstack_rest_plugins_diamond_snmp:
-    requires: [openstack, lab]
+    requires: [openstack, mirantis]
     tests:
       - openstack_rest_plugins
       - diamond_snmp_extension
 
   lab_openstack_security:
-    requires: [openstack, lab]
+    requires: [openstack, mirantis]
     tests:
       - openstack_security
 
-  lab_openstack_cli_packager_docker_plugin:
+  lab_openstack_cli_packager:
     requires: [openstack, lab]
     tests:
       - cli_packager
+
+  docker_plugin:
+    requires: [openstack, mirantis]
+    tests:
       - docker_plugin
 
   #####################################################################
@@ -709,7 +788,7 @@ test_suites:
   ######################################################################
 
   vsphere:
-    handler_configuration: vsphere
+    handler_configuration: vsphere_handler_config
     tests:
       - vsphere_blueprints
 
