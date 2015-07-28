@@ -643,24 +643,24 @@ tests:
     external: *softlayer_plugin_external
     tests:
       - system_tests/manager
-#      - system_tests/local
-#
-#  softlayer_blueprints_1:
-#    external: *softlayer_plugin_external
-#    tests:
-#      - system_tests/manager
-#
-#  softlayer_blueprints_2:
-#    external: *softlayer_plugin_external
-#    tests:
-#      - system_tests/local/test_plugin_local_workflows.py:WrongCredentialsTests
-#      - system_tests/local/test_plugin_local_workflows.py:WrongInputsTests
-#      - system_tests/local/test_plugin_local_workflows.py:HostnameTests
-#
-#  softlayer_blueprints_3:
-#    external: *softlayer_plugin_external
-#    tests:
-#      - system_tests/local/test_plugin_local_workflows.py:StartStopTests
+      - system_tests/local
+
+  softlayer_blueprints_1:
+    external: *softlayer_plugin_external
+    tests:
+      - system_tests/manager
+
+  softlayer_blueprints_2:
+    external: *softlayer_plugin_external
+    tests:
+      - system_tests/local/test_plugin_local_workflows.py:WrongCredentialsTests
+      - system_tests/local/test_plugin_local_workflows.py:WrongInputsTests
+      - system_tests/local/test_plugin_local_workflows.py:HostnameTests
+
+  softlayer_blueprints_3:
+    external: *softlayer_plugin_external
+    tests:
+      - system_tests/local/test_plugin_local_workflows.py:StartStopTests
 
 
 
@@ -799,20 +799,20 @@ test_suites:
     tests:
       - softlayer_blueprints
 
-#  softlayer_1:
-#    handler_configuration: softlayer
-#    tests:
-#      - softlayer_blueprints_1
-#
-#  softlayer_2:
-#    handler_configuration: softlayer
-#    tests:
-#      - softlayer_blueprints_2
-#
-#  softlayer_3:
-#    handler_configuration: softlayer
-#    tests:
-#      - softlayer_blueprints_3
+  softlayer_1:
+    handler_configuration: softlayer
+    tests:
+      - softlayer_blueprints_1
+
+  softlayer_2:
+    handler_configuration: softlayer
+    tests:
+      - softlayer_blueprints_2
+
+  softlayer_3:
+    handler_configuration: softlayer
+    tests:
+      - softlayer_blueprints_3
 
 
   ########################################################################
