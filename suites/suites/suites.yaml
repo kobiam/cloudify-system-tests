@@ -645,6 +645,11 @@ tests:
       - system_tests/manager
       - system_tests/local
 
+  softlayer_basic_install:
+    external: *softlayer_plugin_external
+    tests:
+      - system_tests/manager/test_install_uninstall.py:InstallTests.test_install_uninstall_linux
+
   softlayer_blueprints_1:
     external: *softlayer_plugin_external
     tests:
@@ -814,7 +819,11 @@ test_suites:
     tests:
       - softlayer_blueprints_3
 
-
+  softlayer_basic_install:
+    handler_configuration: softlayer
+    tests:
+      - softlayer_basic_install
+      
   ########################################################################
 
   ec2:
