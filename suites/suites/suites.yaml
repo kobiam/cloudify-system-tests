@@ -650,6 +650,16 @@ tests:
     tests:
       - system_tests/manager/test_install_uninstall.py:InstallTests.test_install_uninstall_linux
 
+  softlayer_private_only_vm:
+    external: *softlayer_plugin_external
+    tests:
+      - system_tests/manager/test_install_uninstall.py:InstallTests.test_private_only_flag
+
+  softlayer_nodecellar:
+    external: *softlayer_plugin_external
+    tests:
+      - system_tests/manager/test_nodecellar.py
+
   softlayer_blueprints_1:
     external: *softlayer_plugin_external
     tests:
@@ -823,7 +833,17 @@ test_suites:
     handler_configuration: softlayer
     tests:
       - softlayer_basic_install
-      
+
+  softlayer_nodecellar:
+    handler_configuration: softlayer
+    tests:
+      - softlayer_nodecellar
+
+  softlayer_private_only_vm:
+    handler_configuration: softlayer
+    tests:
+      - softlayer_private_only_vm
+
   ########################################################################
 
   ec2:
