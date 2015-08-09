@@ -298,7 +298,7 @@ class SuiteRunner(object):
                 except sh.ErrorReturnCode:
                     failed_groups.append(test_group)
 
-                #self.add_missing_tests(report_file, tests_list_file_path)
+                # self.add_missing_tests(report_file, tests_list_file_path)
 
         if failed_groups:
             raise AssertionError('Failed test groups: {}'.format(
