@@ -5,4 +5,5 @@ nose
 xmltodict
 requests
 jinja2
-lxml
+#temp until CFY-3129 is resolved
+#lxml

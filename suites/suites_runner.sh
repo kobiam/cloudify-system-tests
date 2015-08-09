@@ -12,6 +12,9 @@ create_virtualenv_if_needed_and_source()
         source system_tests_controller_venv/bin/activate
         pip install pip --upgrade
         pip install -r requirements.txt
+
+        # temp until CFY-3129 is resolved
+        pip install lxml
     else
         source system_tests_controller_venv/bin/activate
     fi

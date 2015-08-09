@@ -22,7 +22,6 @@ import logging
 import sh
 import yaml
 from path import path
-import lxml.etree as et
 
 from helpers import sh_bake
 # don't put imports that may include system tests code here
@@ -299,14 +298,14 @@ class SuiteRunner(object):
                 except sh.ErrorReturnCode:
                     failed_groups.append(test_group)
 
-                self.add_missing_tests(report_file, tests_list_file_path)
+                #self.add_missing_tests(report_file, tests_list_file_path)
 
         if failed_groups:
             raise AssertionError('Failed test groups: {}'.format(
                 failed_groups))
 
     def add_missing_tests(self, report_file_path, expected_tests_file_path):
-
+        import lxml.etree as et
         # comparing tests that should have run to tests that actually
         # ran, and adding missing test to the xml report
         parser = et.XMLParser(strip_cdata=False)
