@@ -82,6 +82,27 @@ class HelloWorldSingleHostTest(AbstractHelloWorldTest):
         }
         self._run(blueprint_file='singlehost-blueprint.yaml', inputs=inputs)
 
+    def test_manager_blueprint_idempotency(self):
+        remote_manager_key_path = '/home/{0}/manager_key.pem'.format(
+            self.env.centos_7_image_user)
+        self.bootstrap_simple_manager_blueprint(remote_manager_key_path)
+        inputs = {
+            'server_ip': self.public_ip_address,
+            'agent_user': self.env.centos_7_image_user,
+            'agent_private_key_path': remote_manager_key_path
+        }
+        with fabric_api.settings(host_string=self.public_ip_address,
+                                 user=self.env.centos_7_image_user,
+                                 key_filename=self.inputs['key_pair_path']):
+            fabric_api.run('sudo systemctl stop cloudify-rabbitmq.service')
+            fabric_api.run('sudo rm /etc/sysconfig/cloudify-rabbitmq')
+            fabric_api.run(
+                'sudo rm /usr/lib/systemd/system/cloudify-rabbitmq.service')
+            fabric_api.run('sudo systemctl daemon-reload')
+            fabric_api.run('sudo yum remove -y rabbitmq')
+        self.bootstrap_simple_manager_blueprint(remote_manager_key_path)
+        self._run(blueprint_file='singlehost-blueprint.yaml', inputs=inputs)
+
     def _do_post_uninstall_assertions(self, context):
         instances = self.client.node_instances.list(self.test_id)
         for x in instances:
@@ -94,11 +115,12 @@ class HelloWorldSingleHostTest(AbstractHelloWorldTest):
         self.addCleanup(self.cfy.teardown)
 
     def bootstrap_simple_manager_blueprint(self, remote_manager_key_path):
-        self.manager_blueprints_repo_dir = clone(MANAGER_BLUEPRINTS_REPO_URL,
-                                                 self.workdir)
-        self.test_manager_blueprint_path = \
-            os.path.join(self.manager_blueprints_repo_dir,
-                         'new', 'simple-manager-blueprint.yaml')
+        if not hasattr(self, 'test_manager_blueprint_path'):
+            manager_blueprints_repo_dir = clone(
+                MANAGER_BLUEPRINTS_REPO_URL, self.workdir)
+            self.test_manager_blueprint_path = os.path.join(
+                manager_blueprints_repo_dir,
+                'new', 'simple-manager-blueprint.yaml')
 
         # using the updated handler configuration blueprint to update the
         # package urls in the simple manager blueprint
