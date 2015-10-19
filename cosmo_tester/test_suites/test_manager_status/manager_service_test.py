@@ -15,7 +15,7 @@
 import urllib
 from time import sleep, time
 
-from fabric.api import env, reboot
+from fabric.api import env, sudo
 
 from cosmo_tester.framework.testenv import TestCase
 from cosmo_tester.framework.util import get_actual_keypath
@@ -29,7 +29,7 @@ class RebootManagerTest(TestCase):
                                                self.env.management_key_path),
             'host_string': self.env.management_ip,
         })
-        reboot()
+        sudo('shutdown -r +1 "Rebooting!"')
 
     def _get_undefined_services(self):
         return [each['display_name']
