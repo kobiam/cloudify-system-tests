@@ -27,7 +27,7 @@ variables:
   datacentred_openstack_centos_6_5_image_name: CentOS 6.6 dccloud
   datacentred_openstack_centos_7_image_name: CentOS 7.0
   datacentred_openstack_centos_7_image_id: 74ff4015-aee1-4e02-aaa8-1c77b2650394
-  datacentred_openstack_windows_image_name: Windows Server 2012 R2 Standard
+  datacentred_openstack_windows_image_name: Windows Server 2012 R2 Standhrd
 
   rhel_7_image_user: ec2-user
   aws_ec2_eu_central_1_ami_ubuntu_trusty_image_id: ami-00dae61d
@@ -195,7 +195,7 @@ templates:
 
   - &packager_external
     repo: cloudify-packager
-    branch: '{{core_branch}}'
+    branch: 'CFY-4507-add-rhel65'
 
   - &diamond_snmp_extension_external
     repo: cloudify-diamond-snmp-extension
@@ -746,7 +746,7 @@ tests:
   cli_packager_rhel:
     external: *packager_external
     tests:
-      - system_tests/test_rhel_bootstrap.py
+      - system_tests/test_rhel6_5_bootstrap.py
 
   diamond_snmp_extension:
     external: *diamond_snmp_extension_external
