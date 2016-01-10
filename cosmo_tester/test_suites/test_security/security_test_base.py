@@ -169,7 +169,8 @@ class SecurityTestBase(TestCase):
         return overrides
 
     def _bootstrap(self):
-        self.cfy.bootstrap(blueprint_path=self.test_manager_blueprint_path,
+        self.cfy.bootstrap(keep_up_on_failure=True,
+                           blueprint_path=self.test_manager_blueprint_path,
                            inputs_file=self.test_inputs_path,
                            task_retries=5,
                            install_plugins=self.env.install_plugins)
