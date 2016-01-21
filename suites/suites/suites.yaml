@@ -731,11 +731,12 @@ tests:
       - system_tests/manager
       - system_tests/local
 
-  openstack_security:
+  manager_security:
     tests:
+      # runs all security tests EXCEPT ad_auth_test
       - cosmo_tester/test_suites/test_security -e ad_auth_test
 
-  ec2_security:
+  active_dir_authentication:
     tests:
       - cosmo_tester/test_suites/test_security/ad_auth_test.py
 
@@ -876,12 +877,7 @@ test_suites:
   openstack_security:
     requires: [openstack, datacentred]
     tests:
-      - openstack_security
-      - broker_security
-
-  broker_security:
-    requires: [openstack, datacentred]
-    tests:
+      - manager_security
       - broker_security
 
   external_components:
@@ -892,7 +888,7 @@ test_suites:
   ec2_security:
     handler_configuration: aws_ec2
     tests:
-      - ec2_security
+      - active_dir_authentication
 
   docker_plugin:
     requires: [openstack, datacentred]
