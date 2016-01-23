@@ -881,8 +881,8 @@ test_suites:
 
   broker_security:
     requires: [openstack, datacentred]
-      tests:
-        - broker_security
+    tests:
+      - broker_security
 
   external_components:
     requires: [openstack, datacentred]
