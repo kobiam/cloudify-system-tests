@@ -701,6 +701,11 @@ tests:
       # runs all security tests EXCEPT ad_auth_test
       - cosmo_tester/test_suites/test_security -e ad_auth_test
 
+  dummy_test_group:
+    tests:
+      # runs all security tests EXCEPT ad_auth_test
+      #- cosmo_tester/test_suites/test_security -e ad_auth_test
+
   active_dir_authentication:
     tests:
       - cosmo_tester/test_suites/test_security/ad_auth_test.py
@@ -832,6 +837,11 @@ test_suites:
     tests:
       - broker_security
       - manager_security
+
+  dummy_test_suite:
+    requires: [openstack, datacentred]
+    tests:
+      - dummy_test_group
 
   external_components:
     requires: [openstack, datacentred]
