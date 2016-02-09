@@ -703,8 +703,7 @@ tests:
 
   dummy_test_group:
     tests:
-      # runs all security tests EXCEPT ad_auth_test
-      #- cosmo_tester/test_suites/test_security -e ad_auth_test
+      - cosmo_tester/test_suites/test_security/dummy_security_test.py
 
   active_dir_authentication:
     tests:
