@@ -7,3 +7,4 @@ requests==2.7.0
 jinja2==2.7.2
 lxml
 gspread
+oauth2client
