@@ -61,6 +61,7 @@ class QuickbuildDriver():
         return report_id
 
     def get_report_success_rate(self):
+        print '***** getting report stats from {0}'.format(self.report_stats_url)
         build_stats = requests.get(self.report_stats_url, auth=self.auth)
         build_stats_root = etree.fromstring(build_stats.text)
         build_stats_rows = build_stats_root.iterfind(".//row")
