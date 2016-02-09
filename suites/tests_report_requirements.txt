@@ -1,6 +1,8 @@
 sh
-path.py==5.1
+path.py>=8.1.2
 PyYAML==3.10
 nose
 xmltodict
-requests
+requests==2.7.0
+jinja2==2.7.2
+lxml
