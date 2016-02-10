@@ -8,7 +8,7 @@ import gspread
 from oauth2client.client import SignedJwtAssertionCredentials
 
 
-SUITES_YAML_FILE = '../suites/suites.yaml'
+RELATIVE_SUITES_YAML_FILE = '../suites/suites.yaml'
 QUICKBUILD_ADDRESS = 'http://192.168.9.18:8810'
 
 GOOGLE_ACCOUNT = 'cfy_champion@gigaspaces.com'
@@ -187,8 +187,10 @@ class GoogleSheetsDriver():
 
 
 class CloudifyTestSuites():
-    def __init__(self, suites_yaml_file):
-        with open(suites_yaml_file, 'r') as stream:
+    def __init__(self, relative_suites_yaml_file):
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        suite_yaml_path = os.path.join(current_dir, relative_suites_yaml_file)
+        with open(suite_yaml_path, 'r') as stream:
             self.suites_yaml = yaml.load(stream)
 
     @staticmethod
@@ -296,7 +298,7 @@ def main():
     quickbuild_driver = QuickbuildDriver(
         QUICKBUILD_ADDRESS, quickbuild_username, quickbuild_password, build_id)
     success_rate = quickbuild_driver.get_report_success_rate()
-    cloudify_test_suites = CloudifyTestSuites(SUITES_YAML_FILE)
+    cloudify_test_suites = CloudifyTestSuites(RELATIVE_SUITES_YAML_FILE)
     analyzed_results = analyze_results(quickbuild_driver, cloudify_test_suites)
     report_id = quickbuild_driver.get_report_id()
     spreadsheet_driver = GoogleSheetsDriver(google_client_email,
