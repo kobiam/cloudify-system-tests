@@ -176,16 +176,12 @@ class RebootManagerTest(TestCase):
             self.assertIn('tmux executable not found on Manager', str(ex))
 
         self.logger.info('Installing tmux...')
-        fabric.api.sudo('yum install tmux -y')
+        self.cfy.ssh_run_command('sudo yum install tmux -y')
 
         self.logger.info('Test listing sessions when non are available..')
         output = self.cfy.ssh_list().stdout.splitlines()[-1]
         self.assertIn('No sessions are available.', output)
-        fabric.api.sudo('yum remove tmux -y')
-
-        self.logger.info('Test running ssh command...')
-        self.cfy.ssh_run_command('echo yay! > /tmp/ssh_test_output_file')
-        self._check_remote_file_content('/tmp/ssh_test_output_file', 'yay!')
+        self.cfy.ssh_run_command('sudo yum remove tmux -y')
 
     def _check_remote_file_content(self, remote_path, desired_content):
         fd, temp_file = tempfile.mkstemp()
@@ -196,4 +192,4 @@ class RebootManagerTest(TestCase):
                 self.assertEqual(f.read().rstrip('\n\r'), desired_content)
         finally:
             os.remove(temp_file)
-        fabric.api.run('rm {0}'.format(remote_path))
+        self.cfy.ssh_run_command('rm {0}'.format(remote_path))
