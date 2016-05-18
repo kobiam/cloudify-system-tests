@@ -13,30 +13,49 @@
 #    * See the License for the specific language governing permissions and
 #    * limitations under the License.
 
-import socket
-import time
-import sys
 import os
 import re
+import sys
+import time
 import json
+import socket
 import shutil
 import string
 import random
+import urllib
 import tempfile
 
-import jinja2
 import yaml
+import jinja2
 from path import path
 from itsdangerous import base64_encode
 
-from cloudify_rest_client import CloudifyClient
 from cloudify_cli import constants
+from cloudify_rest_client import CloudifyClient
 
 from cosmo_tester import resources
 
 
 CLOUDIFY_AUTHORIZATION_HEADER = 'Authorization'
 CLOUDIFY_AUTH_TOKEN_HEADER = 'Authentication-Token'
+
+
+def get_file_name_from_url(url):
+    return url.split('/')[-1]
+
+
+def download_file(url, destination=''):
+
+    if not destination:
+        fd, destination = tempfile.mkstemp(suffix=get_file_name_from_url(url))
+        os.remove(destination)
+        os.close(fd)
+
+    if not os.path.isfile(destination):
+        final_url = urllib.urlopen(url).geturl()
+        f = urllib.URLopener()
+        f.retrieve(final_url, destination)
+    return destination
 
 
 def process_variables(suites_yaml, unprocessed_dict):

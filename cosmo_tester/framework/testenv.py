@@ -14,23 +14,25 @@
 #    * limitations under the License.
 
 
-import unittest
-import logging
-import sys
-import shutil
-import tempfile
-import time
-import copy
 import os
-import importlib
+import sys
+import time
 import json
+import copy
+import shutil
+import logging
+import tempfile
+import unittest
+import importlib
 from contextlib import contextmanager
 
 import yaml
-from path import path
 import fabric.api
 import fabric.context_managers
+from path import path
 
+from cosmo_tester.framework import util
+from cosmo_tester.framework import git_helper
 from cosmo_tester.framework.cfy_helper import (CfyHelper,
                                                DEFAULT_EXECUTE_TIMEOUT)
 from cosmo_tester.framework.util import (get_blueprint_path,
@@ -98,7 +100,6 @@ def teardown():
 
 # Singleton class
 class TestEnvironment(object):
-    # Singleton class
     def __init__(self):
         self._initial_cwd = os.getcwd()
         self._global_cleanup_context = None
@@ -219,6 +220,31 @@ class TestEnvironment(object):
             verbose=True)
         self._running_env_setup(cfy.get_management_ip())
         self.handler.after_bootstrap(cfy.get_provider_context())
+        self.upload_plugins()
+
+    def _get_wagons(self, wagons=None):
+        self.logger.info('Downloading Wagons...')
+        wagon_paths = []
+        versions_repo_url = 'https://github.com/cloudify-cosmo/' \
+                            'cloudify-versions.git'
+        path = git_helper.clone(
+            versions_repo_url, self.workdir,
+            branch='CFY-5004-remove-plugins-from-manager-blueprints')
+        plugins = util.get_yaml_as_dict(
+            os.path.join(path, 'plugin-urls.yaml'))['plugins']
+        for plugin in plugins:
+            if (plugin['name'] or plugin['wgn_url']) in wagons or not wagons:
+                self.logger.info('Downloading: {0}...'.format(
+                    plugin['wgn_url']))
+                wagon_paths.append(util.download_file(plugin['wgn_url']))
+        return wagon_paths
+
+    def upload_plugins(self, chosen_wagons=None):
+        downloaded_wagon_paths = self._get_wagons(chosen_wagons or [])
+        for wagon in downloaded_wagon_paths:
+            self.logger.info('Uploading {0}'.format(wagon))
+            # cfy.plugins.upload(p=wagon, verbose=True)
+            self.rest_client.plugins.upload(wagon)
 
     def teardown(self):
         if self._global_cleanup_context is None:

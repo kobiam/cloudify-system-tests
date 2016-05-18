@@ -72,8 +72,9 @@ class AbstractSingleHostTest(object):
             self.local_env.outputs()['simple_vm_private_ip_address']
 
     def bootstrap_simple_manager_blueprint(self, override_inputs=None):
-        self.manager_blueprints_repo_dir = clone(MANAGER_BLUEPRINTS_REPO_URL,
-                                                 self.workdir)
+        self.manager_blueprints_repo_dir = clone(
+            MANAGER_BLUEPRINTS_REPO_URL, self.workdir,
+            branch='CFY-5004-remove-plugins-from-manager-blueprints')
         self.test_manager_blueprint_path = \
             os.path.join(self.manager_blueprints_repo_dir,
                          'simple-manager-blueprint.yaml')

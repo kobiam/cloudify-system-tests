@@ -14,11 +14,11 @@
 #    * limitations under the License.
 
 
-import tempfile
-import shutil
-import json
 import os
+import json
+import shutil
 import logging
+import tempfile
 
 import sh
 from path import path
