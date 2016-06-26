@@ -132,7 +132,8 @@ class CfyHelper(object):
     def upload_plugins(self):
         downloaded_wagon_paths = self._download_wagons()
         for wagon in downloaded_wagon_paths:
-            self.logger.info('Uploading {0}'.format(wagon))
+            with self.workdir:
+                self.logger.info('Uploading {0}'.format(wagon))
             upload = cfy.plugins.upload(p=wagon, verbose=True)
             upload.wait()
 
