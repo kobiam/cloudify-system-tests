@@ -86,6 +86,7 @@ variables:
   # If you happen to use a new variable, kindly add its name here
   # as well.
   system_tests_branch: _
+  manager_blueprints_branch: '3.4.0.2-build'
 
   system_tests_shared_key: _
   system_tests_shared_public: _
