@@ -913,6 +913,10 @@ tests:
     tests:
     - cosmo_tester/test_suites/test_dockercompute
 
+  telecom_manager:
+      tests:
+      - cosmo_tester/test_suites/test_telecom/telecom_manager_test.py
+
 #####################################################################################
 
 test_suites:
@@ -1119,6 +1123,13 @@ test_suites:
     handler_configuration: azure
     tests:
       - azure
+
+  ########################################################################
+
+  telecom:
+      requires: [openstack, datacentred]
+      tests:
+        - telecom_manager
 
 # these files are created on the client container before executing the tests
 # only applies in quickbuild runs, not when running locally
